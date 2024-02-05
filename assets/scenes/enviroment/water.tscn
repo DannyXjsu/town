@@ -1,0 +1,68 @@
+[gd_scene load_steps=11 format=3 uid="uid://1bmlfmdijk33"]
+
+[ext_resource type="Script" path="res://assets/scripts/visual/water_expensive.gd" id="1_duu6n"]
+[ext_resource type="Shader" path="res://assets/visual/shaders/water_plane.gdshader" id="2_qudu6"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_axqru"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_kj1vk"]
+noise_type = 2
+fractal_type = 3
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_5mnt8"]
+seamless = true
+as_normal_map = true
+bump_strength = 16.0
+noise = SubResource("FastNoiseLite_kj1vk")
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_2it4o"]
+noise_type = 2
+seed = 50
+fractal_type = 3
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_fdal7"]
+seamless = true
+as_normal_map = true
+bump_strength = 16.0
+noise = SubResource("FastNoiseLite_2it4o")
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_fpu0y"]
+viewport_path = NodePath("World1/Water/SubViewport")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bawh6"]
+resource_local_to_scene = true
+render_priority = 0
+next_pass = SubResource("ShaderMaterial_axqru")
+shader = ExtResource("2_qudu6")
+shader_parameter/valve_half_diffuse = false
+shader_parameter/specular = true
+shader_parameter/specular_effect = 16.0
+shader_parameter/specular_intensity = 8.0
+shader_parameter/fresnel_power = 5.0
+shader_parameter/world_texture = SubResource("ViewportTexture_fpu0y")
+shader_parameter/albedo = Color(0.670588, 1, 0.996078, 1)
+shader_parameter/texture_repeat = 1.0
+shader_parameter/wave_noise = SubResource("NoiseTexture2D_5mnt8")
+shader_parameter/wave_noise_2 = SubResource("NoiseTexture2D_fdal7")
+shader_parameter/wave_speed = 2.7
+shader_parameter/wave_direction = Vector2(0.005, 0.009)
+shader_parameter/wave2_direction = Vector2(-0.005, -0.009)
+shader_parameter/triplanar = false
+shader_parameter/normal_map_depth = 1.0
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_a388d"]
+size = Vector2(30, 30)
+
+[node name="Water" type="Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40.5187, -3.37516, -5.6)
+script = ExtResource("1_duu6n")
+
+[node name="SubViewport" type="SubViewport" parent="."]
+render_target_clear_mode = 2
+
+[node name="Camera3D" type="Camera3D" parent="SubViewport"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 44, -3.4, -5.6)
+
+[node name="WaterPlane" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_bawh6")
+mesh = SubResource("PlaneMesh_a388d")

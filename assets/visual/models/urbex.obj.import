@@ -1,0 +1,22 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://bfdmtoha76tni"
+path="res://.godot/imported/urbex.obj-3e0abc3c9eca0e42597d9c85f7522ab1.mesh"
+
+[deps]
+
+files=["res://.godot/imported/urbex.obj-3e0abc3c9eca0e42597d9c85f7522ab1.mesh"]
+
+source_file="res://assets/visual/models/urbex.obj"
+dest_files=["res://.godot/imported/urbex.obj-3e0abc3c9eca0e42597d9c85f7522ab1.mesh", "res://.godot/imported/urbex.obj-3e0abc3c9eca0e42597d9c85f7522ab1.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
+force_disable_mesh_compression=false

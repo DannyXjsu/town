@@ -1,0 +1,31 @@
+[gd_scene load_steps=3 format=3 uid="uid://37n4j70kacde"]
+
+[ext_resource type="Script" path="res://assets/scripts/entities/rope.gd" id="1_1wb80"]
+
+[sub_resource type="Curve3D" id="Curve3D_ufv03"]
+_data = {
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, -1, 1, 0, -1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0),
+"tilts": PackedFloat32Array(0, 0, 0)
+}
+point_count = 3
+
+[node name="Rope" type="Node3D"]
+script = ExtResource("1_1wb80")
+
+[node name="Origin" type="Marker3D" parent="."]
+
+[node name="PointA" type="Node3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 1, 0)
+
+[node name="marker_pa" type="Marker3D" parent="PointA"]
+
+[node name="PointB" type="Node3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0)
+
+[node name="marker_pb" type="Marker3D" parent="PointB"]
+
+[node name="Rope Path" type="Path3D" parent="."]
+unique_name_in_owner = true
+curve = SubResource("Curve3D_ufv03")

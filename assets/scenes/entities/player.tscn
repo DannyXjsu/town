@@ -1,0 +1,157 @@
+[gd_scene load_steps=10 format=3 uid="uid://ymkd57g75lbw"]
+
+[ext_resource type="Script" path="res://assets/scripts/entities/player.gd" id="1_yh4wf"]
+[ext_resource type="Script" path="res://assets/scripts/entities/player_hud.gd" id="2_4dijw"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_xh2bk"]
+size = Vector3(0.5, 2, 0.5)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dqmgf"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(0, 0.75, 0, 1)
+texture_filter = 0
+texture_repeat = false
+proximity_fade_distance = 2.95
+distance_fade_mode = 2
+distance_fade_min_distance = 0.1
+distance_fade_max_distance = 1.0
+
+[sub_resource type="BoxMesh" id="BoxMesh_in2go"]
+size = Vector3(0.5, 2, 0.5)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_spufq"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(1, 1, 0, 1)
+
+[sub_resource type="PrismMesh" id="PrismMesh_srpgt"]
+size = Vector3(0.5, 1, 0.05)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1ep0f"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(0, 0, 1, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_flg5g"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(0, 1, 0, 1)
+
+[node name="Player" type="CharacterBody3D"]
+script = ExtResource("1_yh4wf")
+
+[node name="Root" type="Marker3D" parent="."]
+gizmo_extents = 1.0
+
+[node name="Collision" type="CollisionShape3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("BoxShape3D_xh2bk")
+
+[node name="Pivot" type="Node3D" parent="."]
+unique_name_in_owner = true
+
+[node name="Ledge Detection" type="Node3D" parent="Pivot"]
+process_mode = 4
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+visible = false
+
+[node name="hor" type="RayCast3D" parent="Pivot/Ledge Detection"]
+unique_name_in_owner = true
+target_position = Vector3(0, 0, -2)
+
+[node name="ver" type="RayCast3D" parent="Pivot/Ledge Detection"]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, -2)
+target_position = Vector3(0, -4, 0)
+
+[node name="Head" type="Node3D" parent="Pivot"]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.75, 0)
+
+[node name="Head" type="Marker3D" parent="Pivot/Head"]
+
+[node name="Camera" type="Camera3D" parent="Pivot/Head"]
+unique_name_in_owner = true
+
+[node name="Editor" type="Node3D" parent="."]
+unique_name_in_owner = true
+
+[node name="Body" type="MeshInstance3D" parent="Editor"]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+material_override = SubResource("StandardMaterial3D_dqmgf")
+transparency = 0.5
+cast_shadow = 0
+mesh = SubResource("BoxMesh_in2go")
+
+[node name="Editor Pivot" type="Node3D" parent="Editor"]
+unique_name_in_owner = true
+
+[node name="Arrow" type="MeshInstance3D" parent="Editor/Editor Pivot"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, -0.9)
+material_override = SubResource("StandardMaterial3D_spufq")
+transparency = 0.75
+mesh = SubResource("PrismMesh_srpgt")
+
+[node name="Editor Velocity" type="Node3D" parent="Editor"]
+unique_name_in_owner = true
+
+[node name="Arrow" type="MeshInstance3D" parent="Editor/Editor Velocity"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, -0.9)
+material_override = SubResource("StandardMaterial3D_1ep0f")
+transparency = 0.75
+mesh = SubResource("PrismMesh_srpgt")
+
+[node name="Editor Direction" type="Node3D" parent="Editor"]
+unique_name_in_owner = true
+
+[node name="Arrow" type="MeshInstance3D" parent="Editor/Editor Direction"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, -0.9)
+material_override = SubResource("StandardMaterial3D_flg5g")
+transparency = 0.75
+mesh = SubResource("PrismMesh_srpgt")
+
+[node name="HUD" type="Control" parent="."]
+unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("2_4dijw")
+
+[node name="Info" type="Control" parent="HUD"]
+layout_mode = 1
+anchor_left = 0.05
+anchor_top = 0.05
+anchor_right = 0.05
+anchor_bottom = 0.05
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HUD/Info"]
+layout_mode = 1
+offset_right = 40.0
+offset_bottom = 40.0
+alignment = 1
+
+[node name="speed" type="Label" parent="HUD/Info/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "PLAYER_SPEED: 0"
+
+[node name="velocity" type="Label" parent="HUD/Info/VBoxContainer"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+text = "velocity.x: 0
+velocity.y: 0
+velocity.z: 0"
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+unique_name_in_owner = true
+volume_db = -12.0
+max_polyphony = 8
