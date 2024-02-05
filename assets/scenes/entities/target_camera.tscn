@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://ccraem4ryxtcm"]
+
+[ext_resource type="Script" path="res://assets/scripts/entities/camera_target.gd" id="1_1chsd"]
+
+[node name="TargetCamera" type="Camera3D"]
+process_mode = 4
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -35, 4, 4)
+script = ExtResource("1_1chsd")

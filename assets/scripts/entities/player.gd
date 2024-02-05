@@ -16,9 +16,10 @@ const PLAYER_HEAD_HEIGHT : float = 1.75
 const PLAYER_HEAD_CROUCH_HEIGHT : float = 1.75/PLAYER_CROUCH_HEIGHT
 const PLAYER_DEAD_HEAD_ANGULAR_DAMP : float = 2.15
 const PLAYER_RAGDOLL_MIN_VELOCITY : float = 12.5
-const PLAYER_RAGDOLL_SND_IMPACT_SOFT_MIN : float = 0.5
+const PLAYER_RAGDOLL_SND_IMPACT_HARD_MIN : float = 7.15
 const PLAYER_RAGDOLL_SND_IMPACT_MEDIUM_MIN : float = 4.0
-const PLAYER_RAGDOLL_SND_IMPACT_HARD_MIN : float = 6.5
+const PLAYER_RAGDOLL_SND_IMPACT_SOFT_MIN : float = 0.5
+const PLAYER_RAGDOLL_START_IMPULSE_FORCE : float = 1.0 # Very buggy, avoid using
 
 # BOOL
 var is_crouching : bool = false
@@ -135,7 +136,22 @@ var ragdoll_old_head : Node3D
 func ragdoll():
 	if !is_ragdolling:
 		is_ragdolling = true
+		# fall_dir is going to be used to determine which direction (we also get the magnitude from
+		# the velocity vector) we will be falling to. If we are mid-air we don't need to worry so
+		# much about this, so we just use the velocity vector from Godot's CharacterBody3D. If we
+		# are on the floor, we need to maintain the floor direction, we can do this with V+N*(V·(-N)),
+		# where V is the velocity vector and N is the floor normal. This way, whenever we ragdoll, we 
+		# fall perpendicular to the floor direction.
+		# This method is not perfect due to how Godot handles the CharacterBody3D on the floor,
+		# but the inconsistency is barely noticeable.
+		var fall_dir : Vector3
+		# Before disabling collision, we need to get a few floor values
+		if is_on_floor():
+			fall_dir = velocity + get_floor_normal() * velocity.dot(-get_floor_normal())
+		else:
+			fall_dir = velocity
 		collision.set_deferred("disabled", true)
+		
 		ragdoll_head_rbody = RigidBody3D.new()
 		ragdoll_head_col = CollisionShape3D.new()
 		ragdoll_old_head = Node3D.new()
@@ -158,9 +174,7 @@ func ragdoll():
 		head.reparent(ragdoll_head_rbody)
 		head.position = Vector3.ZERO
 		#camera.position = Vector3.ZERO
-		var fall_dir : Vector3
-		fall_dir = velocity
-		ragdoll_head_rbody.apply_impulse(fall_dir)
+		ragdoll_head_rbody.apply_impulse(fall_dir * PLAYER_RAGDOLL_START_IMPULSE_FORCE)
 		velocity = Vector3.ZERO
 
 func ragdoll_wakeup():
@@ -199,6 +213,9 @@ func _process(_delta):
 		if ledge_ray_ver.is_colliding():
 			is_near_ledge = true
 
+func jump():
+	velocity += get_floor_normal() + Vector3.UP * JUMP_FORCE * sqrt(collision.shape.size.y)
+
 @onready var _stored_vel = 0.0
 func _physics_process(delta):
 	# Handle Ragdolling
@@ -211,7 +228,7 @@ func _physics_process(delta):
 		
 		# Handle jump.
 		if Input.is_action_pressed("jump") and is_on_floor():
-			velocity += get_floor_normal() + Vector3.UP * JUMP_FORCE * sqrt(collision.shape.size.y)
+			jump()
 		
 		# Handle crouch.
 		if Input.is_action_pressed("crouch"):
